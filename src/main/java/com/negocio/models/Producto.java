@@ -1,13 +1,13 @@
 package com.negocio.models;
 
 public class Producto {
-    // ERROR 1: Corregido - Atributos ahora son privados para respetar el encapsulamiento
+
     private int id;
     private String nombre;
     private double precio;
     private int stock;
 
-    // Agregamos getters y setters para acceder a los atributos de forma controlada
+
     public int getId() {
         return id;
     }
@@ -45,7 +45,7 @@ public class Producto {
         this.stock = stock;
     }
 
-    // ERROR 2: Corregido - Constructor con validaciones
+
     public Producto(int id, String nombre, double precio, int stock) {
         if (id <= 0) {
             throw new IllegalArgumentException("El ID debe ser mayor que 0");

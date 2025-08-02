@@ -20,7 +20,7 @@ public class PedidoService {
         this.contadorPedidos = 1;
     }
 
-    // ERROR 11: Corregido - Incrementar contador en lugar de decrementar
+
     public Pedido crearPedido(Cliente cliente) {
         if (cliente == null) {
             throw new IllegalArgumentException("El cliente no puede ser nulo");
@@ -31,7 +31,7 @@ public class PedidoService {
         return pedido;
     }
 
-    // ERROR 12: Corregido - Eliminar bucle innecesario y usar cantidad directamente
+
     public boolean agregarProductoAPedido(int pedidoId, int productoId, int cantidad) {
         if (pedidoId <= 0 || productoId <= 0 || cantidad <= 0) {
             throw new IllegalArgumentException("El ID del pedido, ID del producto y cantidad deben ser mayores que 0");

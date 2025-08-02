@@ -40,7 +40,7 @@ public class Pedido {
         calcularTotal();
     }
 
-    // ERROR 5: Corregido - Cálculo del total considerando cantidades
+
     private void calcularTotal() {
         total = 0;
         // Asumimos que la cantidad de cada producto se maneja en un mapa o lista de cantidades
@@ -50,7 +50,7 @@ public class Pedido {
         }
     }
 
-    // ERROR 6: Corregido - Verificación para evitar IndexOutOfBoundsException
+
     public Producto obtenerPrimerProducto() {
         if (productos.isEmpty()) {
             throw new IllegalStateException("La lista de productos está vacía");
@@ -58,7 +58,7 @@ public class Pedido {
         return productos.get(0);
     }
 
-    // ERROR 7: Corregido - Descuento aplicado correctamente (restando)
+
     public double aplicarDescuento(double porcentaje) {
         if (porcentaje < 0 || porcentaje > 100) {
             throw new IllegalArgumentException("El porcentaje de descuento debe estar entre 0 y 100");
@@ -67,7 +67,7 @@ public class Pedido {
         return total - descuento;
     }
 
-    // Getters
+
     public int getId() { return id; }
     public Cliente getCliente() { return cliente; }
     public List<Producto> getProductos() { return new ArrayList<>(productos); } // Retorna copia para proteger la lista

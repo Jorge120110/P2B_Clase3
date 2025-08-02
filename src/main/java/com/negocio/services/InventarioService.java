@@ -19,7 +19,7 @@ public class InventarioService {
         productos.add(new Producto(4, "Refresco", 3.50, 50));
     }
 
-    // ERROR 8: Corregido - Evitar bucle infinito cambiando <= a <
+
     public Producto buscarProductoPorId(int id) {
         if (id <= 0) {
             throw new IllegalArgumentException("El ID debe ser mayor que 0");
@@ -32,7 +32,7 @@ public class InventarioService {
         return null;
     }
 
-    // ERROR 9: Corregido - Actualizar stock después de la venta
+
     public boolean venderProducto(int id, int cantidad) {
         if (cantidad <= 0) {
             throw new IllegalArgumentException("La cantidad debe ser mayor que 0");
@@ -46,14 +46,13 @@ public class InventarioService {
         return false;
     }
 
-    // ERROR 10: Corregido - Condición ajustada y uso de stream para evitar duplicación
+
     public List<Producto> obtenerProductosDisponibles() {
         return productos.stream()
                 .filter(producto -> producto.getStock() > 0)
                 .toList();
     }
 
-    // Modificado para retornar una copia de la lista y proteger encapsulamiento
     public List<Producto> obtenerTodosLosProductos() {
         return new ArrayList<>(productos);
     }

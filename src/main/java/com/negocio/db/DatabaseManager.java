@@ -19,7 +19,7 @@ public class DatabaseManager {
 
     private static void inicializarTablas() {
         try (Statement stmt = connection.createStatement()) {
-            // Crear tabla productos
+
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS productos (
                     id INTEGER PRIMARY KEY,
@@ -29,7 +29,7 @@ public class DatabaseManager {
                 )
             """);
 
-            // Crear tabla clientes
+
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS clientes (
                     id INTEGER PRIMARY KEY,
@@ -38,7 +38,7 @@ public class DatabaseManager {
                 )
             """);
 
-            // Crear tabla pedidos
+
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS pedidos (
                     id INTEGER PRIMARY KEY,
