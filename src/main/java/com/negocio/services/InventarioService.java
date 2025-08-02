@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InventarioService {
-    private List<Producto> productos;
+    private final List<Producto> productos;
 
     public InventarioService() {
         this.productos = new ArrayList<>();
@@ -19,41 +19,42 @@ public class InventarioService {
         productos.add(new Producto(4, "Refresco", 3.50, 50));
     }
 
-    // ERROR 8: Bucle infinito potencial
+    // ERROR 8: Corregido - Evitar bucle infinito cambiando <= a <
     public Producto buscarProductoPorId(int id) {
-        int i = 0;
-        while (i <= productos.size()) { // Debería ser < en lugar de <=
-            if (productos.get(i).id == id) {
-                return productos.get(i);
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID debe ser mayor que 0");
+        }
+        for (Producto producto : productos) {
+            if (producto.getId() == id) {
+                return producto;
             }
-            i++;
         }
         return null;
     }
 
-    // ERROR 9: No actualiza el stock después de la venta
+    // ERROR 9: Corregido - Actualizar stock después de la venta
     public boolean venderProducto(int id, int cantidad) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor que 0");
+        }
         Producto producto = buscarProductoPorId(id);
         if (producto != null && producto.hayStock(cantidad)) {
-            // No reduce el stock - ERROR LÓGICO
-            System.out.println("Venta realizada: " + producto.nombre);
+            producto.reducirStock(cantidad); // Reducimos el stock
+            System.out.println("Venta realizada: " + producto.getNombre());
             return true;
         }
         return false;
     }
 
-    // ERROR 10: Código duplicado y condición mal formulada
+    // ERROR 10: Corregido - Condición ajustada y uso de stream para evitar duplicación
     public List<Producto> obtenerProductosDisponibles() {
-        List<Producto> disponibles = new ArrayList<>();
-        for (Producto producto : productos) {
-            if (producto.stock >= 0) { // Debería ser > 0
-                disponibles.add(producto);
-            }
-        }
-        return disponibles;
+        return productos.stream()
+                .filter(producto -> producto.getStock() > 0)
+                .toList();
     }
 
+    // Modificado para retornar una copia de la lista y proteger encapsulamiento
     public List<Producto> obtenerTodosLosProductos() {
-        return productos;
+        return new ArrayList<>(productos);
     }
 }

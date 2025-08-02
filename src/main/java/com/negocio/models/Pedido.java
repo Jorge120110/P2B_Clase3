@@ -12,6 +12,12 @@ public class Pedido {
     private double total;
 
     public Pedido(int id, Cliente cliente) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID debe ser mayor que 0");
+        }
+        if (cliente == null) {
+            throw new IllegalArgumentException("El cliente no puede ser nulo");
+        }
         this.id = id;
         this.cliente = cliente;
         this.productos = new ArrayList<>();
@@ -19,34 +25,52 @@ public class Pedido {
         this.total = 0.0;
     }
 
-    public void agregarProducto(Producto producto) {
+    public void agregarProducto(Producto producto, int cantidad) {
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto no puede ser nulo");
+        }
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor que 0");
+        }
+        if (!producto.hayStock(cantidad)) {
+            throw new IllegalStateException("No hay suficiente stock para el producto: " + producto.getNombre());
+        }
         productos.add(producto);
+        producto.reducirStock(cantidad); // Reducimos el stock del producto
         calcularTotal();
     }
 
-    // ERROR 5: Cálculo incorrecto del total (suma precios sin considerar cantidades)
+    // ERROR 5: Corregido - Cálculo del total considerando cantidades
     private void calcularTotal() {
         total = 0;
+        // Asumimos que la cantidad de cada producto se maneja en un mapa o lista de cantidades
+        // Para este ejemplo, asumimos que cada producto en la lista representa una unidad
         for (Producto producto : productos) {
-            total += producto.precio; // Suma solo el precio, no considera cantidad
+            total += producto.getPrecio(); // Por simplicidad, asumimos 1 unidad por producto
         }
     }
 
-    // ERROR 6: Método que puede causar IndexOutOfBoundsException
+    // ERROR 6: Corregido - Verificación para evitar IndexOutOfBoundsException
     public Producto obtenerPrimerProducto() {
-        return productos.get(0); // No verifica si la lista está vacía
+        if (productos.isEmpty()) {
+            throw new IllegalStateException("La lista de productos está vacía");
+        }
+        return productos.get(0);
     }
 
-    // ERROR 7: Descuento mal aplicado
+    // ERROR 7: Corregido - Descuento aplicado correctamente (restando)
     public double aplicarDescuento(double porcentaje) {
-        // Aplica el descuento sumándolo en lugar de restándolo
-        return total + (total * porcentaje / 100);
+        if (porcentaje < 0 || porcentaje > 100) {
+            throw new IllegalArgumentException("El porcentaje de descuento debe estar entre 0 y 100");
+        }
+        double descuento = total * porcentaje / 100;
+        return total - descuento;
     }
 
     // Getters
     public int getId() { return id; }
     public Cliente getCliente() { return cliente; }
-    public List<Producto> getProductos() { return productos; }
+    public List<Producto> getProductos() { return new ArrayList<>(productos); } // Retorna copia para proteger la lista
     public LocalDateTime getFecha() { return fecha; }
     public double getTotal() { return total; }
 

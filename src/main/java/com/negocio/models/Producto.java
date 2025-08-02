@@ -1,28 +1,87 @@
 package com.negocio.models;
 
-// ERROR 1: Atributos públicos (Mala práctica de encapsulamiento)
 public class Producto {
-    public int id;
-    public String nombre;
-    public double precio;
-    public int stock;
+    // ERROR 1: Corregido - Atributos ahora son privados para respetar el encapsulamiento
+    private int id;
+    private String nombre;
+    private double precio;
+    private int stock;
 
-    // ERROR 2: Constructor sin validaciones
+    // Agregamos getters y setters para acceder a los atributos de forma controlada
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID debe ser mayor que 0");
+        }
+        this.id = id;
+    }
+    public String getNombre() {
+        return nombre;
+    }
+    public void setNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede ser nulo o vacío");
+        }
+        this.nombre = nombre;
+    }
+    public double getPrecio() {
+        return precio;
+    }
+    public void setPrecio(double precio) {
+        if (precio < 0) {
+            throw new IllegalArgumentException("El precio no puede ser negativo");
+        }
+        this.precio = precio;
+    }
+    public int getStock() {
+        return stock;
+    }
+    public void setStock(int stock) {
+        if (stock < 0) {
+            throw new IllegalArgumentException("El stock no puede ser negativo");
+        }
+        this.stock = stock;
+    }
+
+    // ERROR 2: Corregido - Constructor con validaciones
     public Producto(int id, String nombre, double precio, int stock) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID debe ser mayor que 0");
+        }
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede ser nulo o vacío");
+        }
+        if (precio < 0) {
+            throw new IllegalArgumentException("El precio no puede ser negativo");
+        }
+        if (stock < 0) {
+            throw new IllegalArgumentException("El stock no puede ser negativo");
+        }
         this.id = id;
         this.nombre = nombre;
         this.precio = precio;
-        this.stock = stock; // No valida si el stock es negativo
+        this.stock = stock;
     }
 
-    // ERROR 3: Método que permite stock negativo
+    // ERROR 3: Corregido - Método con validación para evitar stock negativo
     public void reducirStock(int cantidad) {
-        this.stock = this.stock - cantidad; // No verifica si hay suficiente stock
+        if (cantidad < 0) {
+            throw new IllegalArgumentException("La cantidad a reducir no puede ser negativa");
+        }
+        if (this.stock < cantidad) {
+            throw new IllegalStateException("No hay suficiente stock disponible");
+        }
+        this.stock -= cantidad;
     }
 
-    // ERROR 4: Método con lógica incorrecta
+    // ERROR 4: Corregido - Lógica ajustada para incluir igualdad
     public boolean hayStock(int cantidad) {
-        return stock > cantidad; // Debería ser >= para permitir exactamente la cantidad
+        if (cantidad < 0) {
+            throw new IllegalArgumentException("La cantidad no puede ser negativa");
+        }
+        return stock >= cantidad;
     }
 
     @Override

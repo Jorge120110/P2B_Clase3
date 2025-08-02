@@ -7,45 +7,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PedidoService {
-    private List<Pedido> pedidos;
-    private InventarioService inventarioService;
+    private final List<Pedido> pedidos;
+    private final InventarioService inventarioService;
     private int contadorPedidos;
 
     public PedidoService(InventarioService inventarioService) {
+        if (inventarioService == null) {
+            throw new IllegalArgumentException("El servicio de inventario no puede ser nulo");
+        }
         this.pedidos = new ArrayList<>();
         this.inventarioService = inventarioService;
         this.contadorPedidos = 1;
     }
 
-    // ERROR 11: Inicialización incorrecta de variables
+    // ERROR 11: Corregido - Incrementar contador en lugar de decrementar
     public Pedido crearPedido(Cliente cliente) {
+        if (cliente == null) {
+            throw new IllegalArgumentException("El cliente no puede ser nulo");
+        }
         Pedido pedido = new Pedido(contadorPedidos, cliente);
-        contadorPedidos--; // Debería incrementar, no decrementar
+        contadorPedidos++; // Incrementamos el contador
         pedidos.add(pedido);
         return pedido;
     }
 
-    // ERROR 12: Condición mal formulada en bucle
+    // ERROR 12: Corregido - Eliminar bucle innecesario y usar cantidad directamente
     public boolean agregarProductoAPedido(int pedidoId, int productoId, int cantidad) {
-        Pedido pedido = buscarPedidoPorId(pedidoId);
-        if (pedido == null) return false;
-
-        Producto producto = inventarioService.buscarProductoPorId(productoId);
-        if (producto == null) return false;
-
-        // Bucle innecesario con condición incorrecta
-        for (int i = 0; i != cantidad; i++) { // Debería ser < en lugar de !=
-            if (inventarioService.venderProducto(productoId, 1)) {
-                pedido.agregarProducto(producto);
-                //
-            } else {
-                return false;
-            }
+        if (pedidoId <= 0 || productoId <= 0 || cantidad <= 0) {
+            throw new IllegalArgumentException("El ID del pedido, ID del producto y cantidad deben ser mayores que 0");
         }
-        return true;
+        Pedido pedido = buscarPedidoPorId(pedidoId);
+        if (pedido == null) {
+            return false;
+        }
+        Producto producto = inventarioService.buscarProductoPorId(productoId);
+        if (producto == null) {
+            return false;
+        }
+        if (inventarioService.venderProducto(productoId, cantidad)) {
+            pedido.agregarProducto(producto, cantidad); // Usamos el método corregido de Pedido
+            return true;
+        }
+        return false;
     }
 
     private Pedido buscarPedidoPorId(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID debe ser mayor que 0");
+        }
         for (Pedido pedido : pedidos) {
             if (pedido.getId() == id) {
                 return pedido;
@@ -63,7 +72,7 @@ public class PedidoService {
     }
 
     public List<Pedido> obtenerTodosLosPedidos() {
-        return pedidos;
+        return new ArrayList<>(pedidos); // Retorna copia para proteger encapsulamiento
     }
 
     public void mostrarPedidos() {
